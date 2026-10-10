@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FixFlow OS — Independent Apartment Maintenance System</title>
+  <meta name="description" content="Independent, full-featured apartment maintenance operations platform with real-time tracking, live dispatch, and audit trails." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient Interactive Canvas Background -->
+  <div id="ambient-bg">
+    <canvas id="bg-canvas"></canvas>
+  </div>
+
+  <div class="exec-container">
+    <!-- TOP EXECUTIVE COMMAND BAR -->
+    <header class="exec-header">
+      <!-- Brand & Standalone Badge -->
+      <div class="exec-brand-group">
+        <div class="exec-brand-mark">✦</div>
+        <div class="exec-brand-text">
+          <strong>FixFlow OS</strong>
+          <span>Independent Edition</span>
+        </div>
+        <!-- Great Badges: Independent Flag & Database Status -->
+        <span class="grate-badge grate-badge-cyan grate-badge-pulse" title="100% Standalone Self-Contained Frontend & Backend">
+          <span class="grate-badge-dot"></span>✦ Independent OS
+        </span>
+        <div id="db-status" class="grate-badge grate-badge-db" title="Active database engine">
+          <span class="grate-badge-dot"></span>
+          <span id="db-status-text">Detecting DB...</span>
+        </div>
+      </div>
+
+      <!-- Center Executive Navigation Segmented Pills -->
+      <nav class="exec-nav-group" aria-label="Executive Navigation">
+        <button class="exec-nav-pill active" data-view="dashboard">
+          <span>⌂</span> Executive Board
+        </button>
+        <button class="exec-nav-pill" data-view="tickets">
+          <span>📋</span> Work Orders <b id="navCount">0</b>
+        </button>
+        <button class="exec-nav-pill" data-view="activity">
+          <span>↻</span> Audit &amp; SLA Trail
+        </button>
+      </nav>
+
+      <!-- Right Action Controls -->
+      <div class="exec-actions">
+        <!-- Persona Switcher -->
+        <div class="role-badge-select" title="Switch Operating Persona">
+          <span>👤</span>
+          <select id="roleSelect" aria-label="Switch Persona">
+            <option value="resident" selected>Resident · Aarav Mehta</option>
+            <option value="staff">Staff · Suresh Patil</option>
+            <option value="manager">Manager · Priya Sharma</option>
+          </select>
+        </div>
+
+        <!-- Ambient Background Selector -->
+        <div class="bg-select-box" title="Switch Ambient Background">
+          <span>🎨</span>
+          <select id="bgStyleSelect" aria-label="Background Design">
+            <option value="subtle-waves" selected>Cyan Waves</option>
+            <option value="subtle-grid">Cyan Grid</option>
+            <option value="subtle-mesh">Constellation</option>
+            <option value="minimal">Minimal Aura</option>
+          </select>
+        </div>
+
+        <!-- Quick Database Controls -->
+        <button class="icon-btn" id="btn-export-db" title="Export SQLite / LocalStorage Database as JSON">💾</button>
+        <button class="icon-btn" id="btn-reset-db" title="Reset Database to Clean Sample State">↺</button>
+        <button class="icon-btn" id="theme-toggle" title="Toggle Light/Dark Theme">🌙</button>
+        <button class="icon-btn" id="notifBtn" title="Active System Health">🔔</button>
+
+        <!-- New Request Button -->
+        <button class="primary-btn" id="reportBtn"><span>＋</span> Report Issue</button>
+      </div>
+    </header>
+
+    <!-- KPI & SLA HORIZONTAL METRIC RIBBON -->
+    <section class="exec-kpi-ribbon" aria-label="Key Performance Indicators">
+      <div class="kpi-card" data-filter="active">
+        <div class="kpi-header">
+          <span class="kpi-title">Active Requests</span>
+          <span class="grate-badge grate-badge-emergency"><span class="grate-badge-dot"></span>Urgent</span>
+        </div>
+        <div class="kpi-value" id="statActive">0</div>
+        <div class="kpi-sub">Needs attention &amp; dispatch</div>
+      </div>
+
+      <div class="kpi-card" data-filter="progress">
+        <div class="kpi-header">
+          <span class="kpi-title">In Progress</span>
+          <span class="grate-badge grate-badge-progress"><span class="grate-badge-dot"></span>Active</span>
+        </div>
+        <div class="kpi-value" id="statProgress">0</div>
+        <div class="kpi-sub">Staff on-site repairing</div>
+      </div>
+
+      <div class="kpi-card" data-filter="resolved">
+        <div class="kpi-header">
+          <span class="kpi-title">Resolved &amp; Verified</span>
+          <span class="grate-badge grate-badge-resolved"><span class="grate-badge-dot"></span>Closed</span>
+        </div>
+        <div class="kpi-value" id="statResolved">0</div>
+        <div class="kpi-sub">100% verified resolution</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Next Scheduled Action</span>
+          <span class="grate-badge grate-badge-cyan"><span class="grate-badge-dot"></span>SLA Target</span>
+        </div>
+        <div class="kpi-value" style="font-size: 1.45rem; padding-top: 4px;" id="statNextAction">Today · 5:30 PM</div>
+        <div class="kpi-sub" id="statNextActionSub">Plumbing check · Unit 402</div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 1 & 2: REARRANGED SPLIT WORKSPACE          -->
+    <!-- ============================================== -->
+    <main class="exec-main">
+      <div class="view active" id="view-dashboard">
+        <div class="exec-workspace">
+          <!-- LEFT COLUMN: REQUEST QUEUE & STREAM -->
+          <section class="exec-feed-pane">
+            <div class="feed-toolbar">
+              <div class="search-box">
+                <span>⌕</span>
+                <input id="searchInput" type="search" placeholder="Search requests, units, categories, or IDs…">
+              </div>
+              <div class="filter-chip-row" id="filterButtons">
+                <button class="filter-chip active" data-list-filter="all">All Requests</button>
+                <button class="filter-chip" data-list-filter="open">⚡ Open / Assigned</button>
+                <button class="filter-chip" data-list-filter="progress">● In Progress</button>
+                <button class="filter-chip" data-list-filter="resolved">✓ Resolved</button>
+              </div>
+            </div>
+
+            <!-- Ticket Feed List -->
+            <div id="attentionList" class="ticket-feed-list">
+              <!-- Dynamically injected ticket cards with Great Badges -->
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN: LIVE INSPECTOR & RESOLUTION LAB -->
+          <aside class="exec-inspector-pane glowing-lab" id="inspectorPane">
+            <div id="inspectorContent">
+              <!-- Dynamically updated when any ticket is clicked -->
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- VIEW 2: WORK ORDERS LIST (Full feed table alternative) -->
+      <div class="view" id="view-tickets" style="display:none;">
+        <div class="feed-toolbar" style="margin-bottom: 16px;">
+          <div class="search-box">
+            <span>⌕</span>
+            <input id="searchInput2" type="search" placeholder="Quick filter work orders…">
+          </div>
+        </div>
+        <div id="fullTicketList" class="ticket-feed-list">
+          <!-- Dynamically injected -->
+        </div>
+      </div>
+
+      <!-- VIEW 3: AUDIT & SLA TRAIL -->
+      <div class="view" id="view-activity" style="display:none;">
+        <div class="exec-audit-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <div>
+              <h2 style="font-family: var(--font-display); font-size: 1.4rem;">Activity &amp; SLA Audit Trail</h2>
+              <p style="font-size: 13px; color: var(--muted);">Zero WhatsApp leak guarantee. Every status change, assignment, and note is permanently logged.</p>
+            </div>
+            <span class="grate-badge grate-badge-cyan">🛡️ Immutable Audit</span>
+          </div>
+          <div id="activityList">
+            <!-- Dynamically injected activity stream -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Universal Modal Backdrop -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden style="display: none;">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div id="modalContent"></div>
+    </section>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast" id="toast" role="status">
+    <span style="color:var(--cyan); font-size:18px;">✦</span>
+    <div>
+      <strong id="toastTitle">Done</strong>
+      <small id="toastText">Action completed successfully.</small>
+    </div>
+  </div>
+
+  <!-- Self-Contained Independent Scripts -->
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
