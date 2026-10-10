@@ -1,5 +1,4 @@
-# FixFlow OS — Independent Jatin Edition
-
+# FixFlow OS
 A 100% self-contained, independent edition of the **FixFlow Apartment Maintenance Operating System**, featuring a rearranged **Executive Command Workspace**, **The Great Badge System**, and a signature **Electric Cyan Design Palette**.
 
 ## Key Features & Architecture
